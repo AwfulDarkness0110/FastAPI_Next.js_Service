@@ -14,7 +14,7 @@ class DevelopmentSettings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
 
     PROJECT_NAME: str
-    PROJECT_VERSION: str
+    PROJECT_VERSION: str = "1.0.0"
 
     # CORS
     FRONTEND_API: str = "http://localhost:3000"
