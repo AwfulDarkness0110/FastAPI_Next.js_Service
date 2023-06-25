@@ -5,7 +5,7 @@ from starlette_context import context
 def get_auth_headers() -> tuple:
     """Get headers from context"""
 
-    # forwarded_for = context.data.get('X-Forwarded-For')  # TODO: Figure out why this return None
+    # forwarded_for = context.data.get('X-Forwarded-For')
     forwarded_for = "00.00.00.00"
     user_agent = context.data.get('User-Agent')
 

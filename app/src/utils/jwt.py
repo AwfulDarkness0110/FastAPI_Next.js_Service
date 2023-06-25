@@ -5,8 +5,12 @@ from typing import Dict, Any, Union
 import jwt
 from pydantic import SecretStr
 
+from src.core.config import settings
+
 SecretType = Union[str, SecretStr]
 JWT_ALGORITHM = "HS256"
+
+jwt_secret_key = settings.JWT_SECRET_KEY
 
 
 def _get_secret(secret: SecretType) -> SecretType:
@@ -17,13 +21,13 @@ def _get_secret(secret: SecretType) -> SecretType:
 
 
 def generate_jwt_token(
-        identity: str,
-        token_type: str,
-        secret: SecretType,
-        lifetime: int,
-        algorithm: str = JWT_ALGORITHM,
-        claims: Dict[str, Any] = None,
-        headers: Dict[str, Any] = None,
+    identity: str,
+    token_type: str,
+    lifetime: int,
+    secret: SecretType = jwt_secret_key,
+    algorithm: str = JWT_ALGORITHM,
+    claims: Dict[str, Any] = None,
+    headers: Dict[str, Any] = None,
 ) -> str:
     """
     Generate a JWT token.
@@ -70,9 +74,9 @@ def generate_jwt_token(
 
 
 def decode_jwt_token(
-        jwt_token: str,
-        secret: SecretType,
-        algorithm: str = JWT_ALGORITHM
+    jwt_token: str,
+    secret: SecretType = jwt_secret_key,
+    algorithm: str = JWT_ALGORITHM
 ) -> Dict[str, Any]:
     """
     Decode a JWT token.
@@ -92,3 +96,8 @@ def decode_jwt_token(
         _get_secret(secret),
         algorithms=[algorithm]
     )
+
+
+def get_jwt_identity(jwt_token: str) -> str:
+    decoded_token = decode_jwt_token(jwt_token)
+    return decoded_token.get("sub")
