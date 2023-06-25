@@ -1,26 +1,28 @@
-from typing import Union
-
-from pydantic import BaseModel, EmailStr
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 
-class AuthPayload(BaseModel):
-    fingerprint: str
+auth_router = APIRouter()
 
 
-class LoginPayload(AuthPayload):
-    email_or_username: Union[EmailStr, str]
-    password: str
+@auth_router.post('/login')
+async def login(request: Request, response: Response):
+    """Login user and create JWT access and refresh tokens"""
+    pass
 
 
-class RegisterPayload(AuthPayload):
-    username: str
-    first_name: str
-    last_name: str
-    email: EmailStr
-    password: str
+@auth_router.post('/register')
+async def register(request: Request, response: Response):
+    """Register user and create JWT access and refresh tokens"""
+    pass
 
 
-class RefreshPayload(BaseModel):
-    refresh_token: str
+@auth_router.post('/logout')
+async def logout(request: Request, response: Response):
+    """Logout user and revoke JWT access and refresh tokens"""
+    pass
 
 
+@auth_router.post('/refresh')
+async def refresh(request: Request, response: Response):
+    """Refresh JWT access and refresh tokens"""
+    pass
