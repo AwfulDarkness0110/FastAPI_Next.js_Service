@@ -1,5 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
+# from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 from starlette_context import middleware, plugins
 from fastapi_async_sqlalchemy import SQLAlchemyMiddleware
 
@@ -15,9 +17,15 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
+# CORS handling
+origins = [
+    settings.FRONTEND_API,
+]
+
+# DB Handling
 app.add_middleware(
     SQLAlchemyMiddleware,
-    # db_url=get_sqlalchemy_url(),
+    db_url=get_sqlalchemy_url(),
     engine_args={
         "echo": False,
         "pool_pre_ping": True,
@@ -26,6 +34,7 @@ app.add_middleware(
     }
 )
 
+# Client's IP and Address
 app.add_middleware(
     middleware.ContextMiddleware,
     plugins=(
@@ -34,7 +43,20 @@ app.add_middleware(
     )
 )
 
+# CORS handling
+# - Be Explicit with Allowed Origins for now will be only FRONTEND_API.
+# - Handle Preflight Requests.
+# - Consider a Content Security Policy (CSP) use Starlette middleware to add the CSP headers to your responses with allow_origins=["FRONTEND_API"].
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# add api router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 

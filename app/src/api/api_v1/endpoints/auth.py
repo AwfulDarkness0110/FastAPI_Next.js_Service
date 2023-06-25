@@ -13,8 +13,6 @@ from src.db.redis import get_redis_client
 
 router = APIRouter()
 
-# TODO: Redis token management
-
 
 @router.post('/login')
 async def login(

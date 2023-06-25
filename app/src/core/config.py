@@ -16,6 +16,9 @@ class DevelopmentSettings(BaseSettings):
     PROJECT_NAME: str
     PROJECT_VERSION: str
 
+    # CORS
+    FRONTEND_API: str = "http://localhost:3000"
+
     # JWT
     JWT_SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE: int = 60 * 15
