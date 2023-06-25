@@ -13,7 +13,7 @@ async_engine = create_async_engine(
     max_overflow=settings.SQLALCHEMY_MAX_OVERFLOW,
 )
 
-# TODO: configure setting to postgres db (pool_size, pool_recycle, pool_timeout ...)
+# configure setting to postgres db (pool_size, pool_recycle, pool_timeout ...)
 
 
 async def get_async_session() -> AsyncSession:
