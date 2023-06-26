@@ -1,21 +1,4 @@
 
----
-
-## TODO
-* [X] JWT token generation
-* [ ] Basic Auth (login, register, logout, refresh)
-* [ ] Reset Password
-* [ ] Email verification
-* [ ] User session info api endpoints (all sessions, device info ...) (like in Google and Facebook apps)
-* [ ] Add session abort for user (logout from certain session)
-
-## Features
-
-* [ ] User & Role Models
-* [ ] Ready-to-use JWT secure authentication
-* [ ] User session management, session abort ...
-* [ ] ...
-
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
