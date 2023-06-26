@@ -2,12 +2,23 @@ import os
 import secrets
 from pathlib import Path
 from typing import Any, Dict, Optional
+from dotenv import load_dotenv
 
 from pydantic import BaseSettings, PostgresDsn, validator
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+env_path = Path("./envs") / ".env"
+load_dotenv(dotenv_path=env_path)
+
+POSTGRES_SETTING: dict = {
+    "POSTGRES_USER": 'postgres',
+    "POSTGRES_SERVER": 'localhost',
+    "POSTGRES_PASSWORD": "postgres",
+    "POSTGRES_DB": "auth_service",
+    "POSTGRES_PORT": 5432
+}
 
 class DevelopmentSettings(BaseSettings):
     API_V1_STR: str = "/api/v1"
@@ -17,7 +28,7 @@ class DevelopmentSettings(BaseSettings):
     PROJECT_VERSION: str = "1.0.0"
 
     # CORS
-    FRONTEND_API: str = "http://localhost:3000"
+    FRONTEND_API: str = "http://localhost:8000"
 
     # JWT
     JWT_SECRET_KEY: str = secrets.token_urlsafe(32)
@@ -31,11 +42,12 @@ class DevelopmentSettings(BaseSettings):
     REDIS_PASSWORD: Optional[str] = None
 
     # Postgres
-    POSTGRES_SERVER: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
-    POSTGRES_PORT: str = str(5432)
+    POSTGRES_SERVER: str = POSTGRES_SETTING["POSTGRES_SERVER"]
+    POSTGRES_USER: str = POSTGRES_SETTING["POSTGRES_USER"]
+    POSTGRES_PASSWORD: str = POSTGRES_SETTING["POSTGRES_PASSWORD"]
+    POSTGRES_DB: str = POSTGRES_SETTING["POSTGRES_DB"]
+    POSTGRES_PORT: str = POSTGRES_SETTING["POSTGRES_PORT"]
+    POSTGRES_DATABASE_URL: str = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
     # SQLAlchemy

@@ -3,15 +3,16 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.core.config import settings
-
+from src.db.base_class import Base
 
 async_engine = create_async_engine(
-    settings.db_async_connection_str,
+    settings.POSTGRES_DATABASE_URL,
     echo=True,
     future=True,
     pool_size=settings.SQLALCHEMY_POOL_SIZE,
     max_overflow=settings.SQLALCHEMY_MAX_OVERFLOW,
 )
+
 
 # configure setting to postgres db (pool_size, pool_recycle, pool_timeout ...)
 
@@ -24,3 +25,9 @@ async def get_async_session() -> AsyncSession:
     )
     async with async_session() as session:
         yield session
+
+
+# create tables
+async def create_tables():
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

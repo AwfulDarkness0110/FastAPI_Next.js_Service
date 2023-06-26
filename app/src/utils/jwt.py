@@ -1,5 +1,5 @@
 import uuid
-from time import time
+import time
 from typing import Dict, Any, Union
 
 import jwt
@@ -12,6 +12,26 @@ JWT_ALGORITHM = "HS256"
 
 jwt_secret_key = settings.JWT_SECRET_KEY
 
+CRYPTO_KEY = {
+    "jwk": {
+        "crv": "P-256",
+        "kty": "EC",
+        "alg": "ES256",
+        "use": "sig",
+        "kid": "************",
+        "d": "**************",
+        "x": "**************",
+        "y": "**************"
+    },
+    "header": {"alg": "ES256"},
+    "payload": {
+        "iss": "https://idp.example.com",
+        "aud": "api1",
+        "sub": "**********",
+        "exp": int(time.time()) + 300,
+        "iat": int(time.time())
+    }
+}
 
 def _get_secret(secret: SecretType) -> SecretType:
     """Get the secret key."""
@@ -53,7 +73,7 @@ def generate_jwt_token(
     :return:
         The encoded JWT token.
     """
-    current_time = int(time())
+    current_time = int(time.time())
 
     payload = {
         "iat": current_time,

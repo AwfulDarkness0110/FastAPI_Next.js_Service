@@ -4,6 +4,7 @@ from sqlmodel import select
 from fastapi_async_sqlalchemy import db
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.db.session import create_tables
 from src.crud.base import CRUDBase
 from src.models.user import User
 from src.core.security import verify_password, hash_password
@@ -13,6 +14,12 @@ from src.schemas.user import UserCreate, UserUpdate
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     async def create(self, *, obj_in: UserCreate, db_session: Optional[AsyncSession] = None) -> User:
         db_session = db_session or db.session
+
+        # Check if the database is empty
+        if await db_session.scalar(select(User)) is None:
+            # Create the database here
+            await create_tables()
+
         db_obj = User(
             username=obj_in.username,
             first_name=obj_in.first_name,
@@ -39,6 +46,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         user_by_email = await self.get_by_email(email=email)
         user_by_username = await self.get_by_username(username=username)
 
+        # print("step 2-1. get email and username: "+user_by_username+' '+user_by_email)
+
         if user_by_email or user_by_username:
             return True
 
@@ -64,6 +73,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     @staticmethod
     async def get_by_email(email: str, db_session: Optional[AsyncSession] = None) -> Optional[User]:
         db_session = db_session or db.session
+        print("step 1.2.1 => db_session")
         query = await db_session.execute(select(User).where(User.email == email))
         return query.scalar_one_or_none()
 

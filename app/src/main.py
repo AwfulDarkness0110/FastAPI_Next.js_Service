@@ -1,15 +1,18 @@
-import uvicorn
 from fastapi import FastAPI
-# from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette_context import middleware, plugins
 from fastapi_async_sqlalchemy import SQLAlchemyMiddleware
 
-
 from src.api.api_v1.api import api_router
 from core.config import settings
-from db.url import get_sqlalchemy_url
 
+from db.url import get_sqlalchemy_url
+from db.session import async_engine
+from db.base_class import Base
+import tracemalloc
+
+# Enable tracemalloc
+tracemalloc.start()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -59,6 +62,6 @@ app.add_middleware(
 # add api router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
-
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run(app, port=8000, proxy_headers=True, log_level="debug")

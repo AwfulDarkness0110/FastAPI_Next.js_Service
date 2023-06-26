@@ -38,7 +38,7 @@ async def add_refresh_token_to_redis(
     }
 
     await redis_client.sadd(f"user:{user.id}", session_id)
-    await redis_client.hset(f"user:{user.id}:{session_id}", mapping=mapping)
+    await redis_client.hmset(f"user:{user.id}:{session_id}", mapping=mapping)
 
 
 async def delete_token(redis_client: Redis, user: User):

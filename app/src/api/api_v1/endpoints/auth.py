@@ -58,8 +58,11 @@ async def register(
     # Get and check required headers
     forwarded_for, user_agent = get_auth_headers()
 
+    print("#step1 => Ge adn check required headers")
+
     # Validate username and email are unique
     user_exists = await crud.user.email_or_username_exists(email=request.email, username=request.username)
+    print("#step2 => Is exist user?")
     if user_exists:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Username or email already exists')
 
