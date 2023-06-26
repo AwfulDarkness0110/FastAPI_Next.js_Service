@@ -1,11 +1,10 @@
-import os
+import os, time
 import secrets
 from pathlib import Path
 from typing import Any, Dict, Optional
 from dotenv import load_dotenv
 
 from pydantic import BaseSettings, PostgresDsn, validator
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -20,6 +19,28 @@ POSTGRES_SETTING: dict = {
     "POSTGRES_PORT": 5432
 }
 
+# Based JWK setting
+CRYPTO_KEY = {
+    "jwk": {
+        "crv": "P-256",
+        "kty": "EC",
+        "alg": "ES256",
+        "use": "sig",
+        "kid": "************",
+        "d": "**************",
+        "x": "**************",
+        "y": "**************"
+    },
+    "header": {"alg": "ES256"},
+    "payload": {
+        "iss": "https://idp.example.com",
+        "aud": "api1",
+        "sub": "**********",
+        "exp": int(time.time()) + 300,
+        "iat": int(time.time())
+    }
+}
+
 class DevelopmentSettings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
@@ -31,6 +52,7 @@ class DevelopmentSettings(BaseSettings):
     FRONTEND_API: str = "http://localhost:8000"
 
     # JWT
+    JWT_ALGORITHM: str = CRYPTO_KEY['header']['alg']
     JWT_SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE: int = 60 * 15
     REFRESH_TOKEN_EXPIRE: int = 60 * 60 * 24 * 30

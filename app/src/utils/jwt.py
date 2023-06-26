@@ -12,27 +12,6 @@ JWT_ALGORITHM = "HS256"
 
 jwt_secret_key = settings.JWT_SECRET_KEY
 
-CRYPTO_KEY = {
-    "jwk": {
-        "crv": "P-256",
-        "kty": "EC",
-        "alg": "ES256",
-        "use": "sig",
-        "kid": "************",
-        "d": "**************",
-        "x": "**************",
-        "y": "**************"
-    },
-    "header": {"alg": "ES256"},
-    "payload": {
-        "iss": "https://idp.example.com",
-        "aud": "api1",
-        "sub": "**********",
-        "exp": int(time.time()) + 300,
-        "iat": int(time.time())
-    }
-}
-
 def _get_secret(secret: SecretType) -> SecretType:
     """Get the secret key."""
     if isinstance(secret, SecretStr):
