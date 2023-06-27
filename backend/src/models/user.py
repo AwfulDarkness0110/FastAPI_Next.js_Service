@@ -14,7 +14,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     password = Column(String())
     status = Column(Boolean, default=True)
-    role = Column(String, CheckConstraint("role IN ('admin', 'client', 'operator')"))
+    role = Column(String, CheckConstraint("role IN ('admin', 'client', 'operator')"), default='client')
 
 
 class UserItem(Base):

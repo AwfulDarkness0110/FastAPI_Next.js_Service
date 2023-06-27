@@ -22,8 +22,6 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
         db_obj = User(
             username=obj_in.username,
-            first_name=obj_in.first_name,
-            last_name=obj_in.last_name,
             email=obj_in.email,
             password=hash_password(obj_in.password),
         )
