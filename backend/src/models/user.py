@@ -14,12 +14,16 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     password = Column(String())
     status = Column(Boolean, default=True)
-    role = Column(String, CheckConstraint("role IN ('admin', 'client', 'operator')"))
+    role = Column(
+        String,
+        CheckConstraint("role IN ('admin', 'client', 'operator')"),
+        default="client",
+    )
 
 
 class UserItem(Base):
     __tablename__ = "user_items"
     user_id = Column(String, ForeignKey("users.id"), primary_key=True)
-    user = relationship('User', backref='user_items')
+    user = relationship("User", backref="user_items")
     address = Column(String, nullable=False)
     phone_no = Column(String, nullable=False)
