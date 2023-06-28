@@ -27,13 +27,12 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             email=obj_in.email,
             password=hash_password(obj_in.password)
         )
-        db_obj2 = UserItem(
-            username=obj_in.username,
-            first_name=obj_in.first_name,
-            last_name= obj_in.last_name
-        )
+        # db_obj2 = UserItem(
+        #     first_name=obj_in.first_name,
+        #     last_name= obj_in.last_name
+        # )
         db_session.add(db_obj)
-        db_session.add(db_obj2)
+        # db_session.add(db_obj2)
         
         await db_session.commit()
         await db_session.refresh(db_obj)

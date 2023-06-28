@@ -25,7 +25,7 @@ const Authentication = () => {
     event.preventDefault();
 
     try {
-      await axios.post(API_SERVER, {
+      await axios.post(`${API_SERVER}/login`, {
         username_or_email: usernameOrEmail,
         password: loginPassword
       })
@@ -46,7 +46,7 @@ const Authentication = () => {
     event.preventDefault();
 
     try {
-      await axios.post(API_SERVER, {
+      await axios.post(`${API_SERVER}/register`, {
         username: username,
         first_name: firstName,
         last_name: lastName,

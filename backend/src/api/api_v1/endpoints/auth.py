@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request, Depends, status
 from aioredis import Redis
 
-import crud
+import crud.user as crud_user
 from schemas.token import Token
 from utils.headers import get_auth_headers
 from utils.token import add_refresh_token_to_redis
@@ -24,7 +24,7 @@ async def login(
     forwarded_for, user_agent = get_auth_headers()
 
     # Authenticate user
-    user = await crud.user.authenticate(
+    user = await crud_user.user.authenticate(
         email_or_username=request.email_or_username, password=request.password
     )
 
@@ -49,7 +49,6 @@ async def login(
         refresh_token,
         forwarded_for,
         user_agent,
-        request.fingerprint,
     )
 
     data = Token(
@@ -64,14 +63,14 @@ async def register(
     request: RegisterPayload, redis_client: Redis = Depends(get_redis_client)
 ) -> IPostResponseBase[Token]:
     """Register user and create JWT access and refresh tokens"""
-    print("register")
+    
     # Get and check required headers
     forwarded_for, user_agent = get_auth_headers()
 
     print("#step1 => Ge adn check required headers")
 
     # Validate username and email are unique
-    user_exists = await crud.user.email_or_username_exists(
+    user_exists = await crud_user.user.email_or_username_exists(
         email=request.email, username=request.username
     )
     print("#step2 => Is exist user?")
@@ -82,7 +81,7 @@ async def register(
         )
 
     # Create user
-    user = await crud.user.create(obj_in=request)
+    user = await crud_user.user.create(obj_in=request)
 
     # Create tokens
     access_token = create_access_token(user.username)
@@ -94,8 +93,7 @@ async def register(
         user,
         refresh_token,
         forwarded_for,
-        user_agent,
-        request.fingerprint,
+        user_agent
     )
 
     data = Token(

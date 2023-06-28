@@ -49,7 +49,7 @@ class DevelopmentSettings(BaseSettings):
     PROJECT_VERSION: str = "1.0.0"
 
     # CORS
-    FRONTEND_API: str = "http://localhost:8000"
+    FRONTEND_API: str = "http://localhost:3000"
 
     # JWT
     JWT_ALGORITHM: str = CRYPTO_KEY['header']['alg']

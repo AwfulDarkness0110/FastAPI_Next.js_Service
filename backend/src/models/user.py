@@ -6,8 +6,8 @@ from db.base_class import Base
 
 class User(Base):
     __tablename__ = "users"
-
-    username = Column(String(25), primary_key=True, unique=True, index=True)
+    id=Column(Integer, primary_key=True, unique=True)
+    username = Column(String(25), unique=True, index=True)
     # first_name = Column(String(25), index=True)
     # last_name = Column(String(80), index=True)
     email = Column(String, unique=True, index=True)
@@ -22,7 +22,7 @@ class User(Base):
 
 class UserItem(Base):
     __tablename__ = "user_items"
-    username = Column(String, ForeignKey("users.username"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
     first_name=Column(String),
     last_name=Column(String)
     user = relationship("User", backref="user_items")
