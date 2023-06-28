@@ -4,7 +4,8 @@ from pydantic import BaseModel, EmailStr
 
 
 class AuthPayload(BaseModel):
-    fingerprint: str
+    pass
+    # fingerprint: str
 
 
 class LoginPayload(AuthPayload):

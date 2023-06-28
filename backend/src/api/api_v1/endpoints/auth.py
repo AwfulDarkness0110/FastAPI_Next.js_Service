@@ -64,7 +64,7 @@ async def register(
     request: RegisterPayload, redis_client: Redis = Depends(get_redis_client)
 ) -> IPostResponseBase[Token]:
     """Register user and create JWT access and refresh tokens"""
-
+    print("register")
     # Get and check required headers
     forwarded_for, user_agent = get_auth_headers()
 

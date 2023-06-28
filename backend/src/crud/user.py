@@ -6,7 +6,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from db.session import create_tables
 from crud.base import CRUDBase
-from models.user import User
+from models.user import User, UserItem
 from core.security import verify_password, hash_password
 from schemas.user import UserCreate, UserUpdate
 
@@ -25,9 +25,16 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_obj = User(
             username=obj_in.username,
             email=obj_in.email,
-            password=hash_password(obj_in.password),
+            password=hash_password(obj_in.password)
+        )
+        db_obj2 = UserItem(
+            username=obj_in.username,
+            first_name=obj_in.first_name,
+            last_name= obj_in.last_name
         )
         db_session.add(db_obj)
+        db_session.add(db_obj2)
+        
         await db_session.commit()
         await db_session.refresh(db_obj)
         return db_obj
