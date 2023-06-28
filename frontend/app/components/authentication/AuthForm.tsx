@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { API_SERVER } from "@/app/utils/config";
 import axios from 'axios';
 
-import './style.css'
+import './style.css';
+import { createNotification } from "../Alert";
 
 const Authentication = () => {
   let [authMode, setAuthMode] = useState("signin");
@@ -30,9 +31,12 @@ const Authentication = () => {
         password: loginPassword
       })
         .then(async (data) => {
+          createNotification('success', data.data.message)
           console.log(data);
         })
         .catch(err => {
+          createNotification('error', err.message + "\n" + err.response.data.detail)
+
           console.log(err)
         })
     }
@@ -54,9 +58,11 @@ const Authentication = () => {
         password: registerPassword
       })
         .then(async (data) => {
+          createNotification('success', data.data.message)
           console.log(data);
         })
         .catch(err => {
+          createNotification('error', err.message + "\n" + err.response.data.detail)
           console.log(err)
         })
     }
