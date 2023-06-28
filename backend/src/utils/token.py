@@ -2,8 +2,8 @@ from typing import Optional
 
 from aioredis import Redis
 
-from src.utils.jwt import decode_jwt_token
-from src.models.user import User
+from utils.jwt import decode_jwt_token
+from models.user import User
 
 
 async def add_refresh_token_to_redis(
@@ -12,7 +12,7 @@ async def add_refresh_token_to_redis(
     refresh_token: str,
     ip: str,
     user_agent: str,
-    fingerprint: str
+    fingerprint: str,
 ) -> None:
     """
     Add refresh token to redis with other session information
