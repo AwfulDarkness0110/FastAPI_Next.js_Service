@@ -3,7 +3,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette_context import middleware, plugins
 from fastapi_async_sqlalchemy import SQLAlchemyMiddleware
 
-from src.api.api_v1.api import api_router
+from api.api_v1.api import api_router
 from core.config import settings
 
 from db.url import get_sqlalchemy_url
