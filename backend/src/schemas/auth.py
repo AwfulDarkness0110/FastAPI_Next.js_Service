@@ -22,5 +22,3 @@ class RegisterPayload(AuthPayload):
 
 class RefreshPayload(BaseModel):
     refresh_token: str
-
-

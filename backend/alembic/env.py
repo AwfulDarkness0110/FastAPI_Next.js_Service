@@ -7,11 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from alembic import context
 
-from src.core.config import settings
-from src.db.url import get_sqlalchemy_url
-from src.db.base_class import Base
+from core.config import settings
+from db.url import get_sqlalchemy_url
+from db.base_class import Base
 
-from src.models import *  # necessarily to import something from file where your models are stored
+from models import *  # necessarily to import something from file where your models are stored
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -25,12 +25,11 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 target_metadata.naming_convention = {
-   "ix": "ix_%(column_0_label)s",
-   "uq": "uq_%(table_name)s_%(column_0_name)s",
-   "ck": "ck_%(table_name)s_%(constraint_name)s",
-   "fk": "fk_%(table_name)s_%(column_0_name)"
-         "s_%(referred_table_name)s",
-   "pk": "pk_%(table_name)s"
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)" "s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
 }
 
 # other values from the config, defined by the needs of env.py,

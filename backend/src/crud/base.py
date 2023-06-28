@@ -9,7 +9,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 
-from src.db.base_class import Base
+from db.base_class import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -26,7 +26,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         self.model = model
 
-    async def get(self, id: Any, db_session: Optional[AsyncSession]) -> Optional[ModelType]:
+    async def get(
+        self, id: Any, db_session: Optional[AsyncSession]
+    ) -> Optional[ModelType]:
         db_session = db_session or db.session
         query = select(self.model).where(self.model.id == id)
         response = await db_session.execute(query)
@@ -40,7 +42,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         response = await db_session.execute(query)
         return response.scalars().all()
 
-    async def create(self, *, obj_in: CreateSchemaType, db_session: Optional[AsyncSession]) -> ModelType:
+    async def create(
+        self, *, obj_in: CreateSchemaType, db_session: Optional[AsyncSession]
+    ) -> ModelType:
         db_session = db_session or db.session
         db_obj = self.model.from_orm(obj_in)  # type: ignore
 
@@ -83,7 +87,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
         return db_obj
 
-    async def remove(self, *, id: int, db_session: Optional[AsyncSession] = None) -> ModelType:
+    async def remove(
+        self, *, id: int, db_session: Optional[AsyncSession] = None
+    ) -> ModelType:
         db_session = db_session or db.session
         response = await db_session.execute(
             select(self.model).where(self.model.id == id)

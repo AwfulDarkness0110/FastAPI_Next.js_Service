@@ -7,12 +7,6 @@ from api.api_v1.api import api_router
 from core.config import settings
 
 from db.url import get_sqlalchemy_url
-from db.session import async_engine
-from db.base_class import Base
-import tracemalloc
-
-# Enable tracemalloc
-tracemalloc.start()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
