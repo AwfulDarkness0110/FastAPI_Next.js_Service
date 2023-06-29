@@ -3,7 +3,9 @@ import { Welcome } from '@/app/components/authentication'
 
 const welcome = () => {
     return (
-        <Welcome />
+        <div>
+            <Welcome />
+        </div>
     )
 }
 

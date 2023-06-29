@@ -12,7 +12,7 @@ class User(Base):
     # last_name = Column(String(80), index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String())
-    status = Column(Boolean, default=True)
+    status = Column(Boolean, default=False)
     role = Column(
         String,
         CheckConstraint("role IN ('admin', 'client', 'operator')"),
@@ -23,7 +23,7 @@ class User(Base):
 class UserItem(Base):
     __tablename__ = "user_items"
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-    first_name=Column(String),
+    first_name=Column(String)
     last_name=Column(String)
     user = relationship("User", backref="user_items")
     address = Column(String, nullable=False)

@@ -20,23 +20,29 @@ async def login(
 ) -> IPostResponseBase[Token]:
     """Login user and create JWT access and refresh tokens"""
 
+    print("Backend-login-1")
     # Get and check required headers
     forwarded_for, user_agent = get_auth_headers()
+    
+    print("Backend-login-2")
+
+    # print(request.email_or_username, request.password)
 
     # Authenticate user
     user = await crud_user.user.authenticate(
         email_or_username=request.email_or_username, password=request.password
     )
+    print('user', user)
 
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username, email or password",
         )
-    elif not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Inactive user"
-        )
+    # elif not user.status:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZED, detail="Inactive user"
+    #     )
 
     # Create tokens
     access_token = create_access_token(user.username)
@@ -51,11 +57,17 @@ async def login(
         user_agent,
     )
 
-    data = Token(
+    token = Token(
         access_token=access_token, refresh_token=refresh_token, token_type="bearer"
-    )
+    );
 
-    return create_response(data=data, message="User logged in successfully")
+    user_info = {
+        'username': user.username,
+        'email': user.email,
+        'status': user.status
+    }
+
+    return create_response(data=token, user=user_info, message="User logged in successfully")
 
 
 @router.post("/register")
@@ -100,7 +112,14 @@ async def register(
         access_token=access_token, refresh_token=refresh_token, token_type="bearer"
     )
 
-    return create_response(data=data, message="User registered successfully")
+    user_info = {
+        'username': user.username,
+        'email': user.email,
+        'status': user.status
+    }
+
+    return create_response(data=data, message="User registered successfully", user=user_info)
+
 
 
 @router.post("/refresh")

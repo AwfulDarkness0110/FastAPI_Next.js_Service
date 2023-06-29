@@ -1,10 +1,13 @@
 'use client'
-import React, { useState } from "react";
-import { API_SERVER } from "@/app/utils/config";
+import React, { useContext, useState } from "react";
+import { API_URL, NEXT_URL } from "@/lib/config";
 import axios from 'axios';
 
 import './style.css';
 import { createNotification } from "../Alert";
+import AuthContext from "@/app/context/AuthContext";
+import Link from "next/link";
+import Image from 'next/image';
 
 const Authentication = () => {
   let [authMode, setAuthMode] = useState("signin");
@@ -13,9 +16,11 @@ const Authentication = () => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
-  const [usernameOrEmail, setUsernameOrEmail] = useState('')
+  const [emailOrUsername, setEmailOrUsername] = useState('')
   const [registerPassword, setRegisterPassword] = useState('')
   const [email, setEmail] = useState('')
+
+  const { login, register, error, user, isLoading } = useContext(AuthContext);
 
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
@@ -26,19 +31,13 @@ const Authentication = () => {
     event.preventDefault();
 
     try {
-      await axios.post(`${API_SERVER}/login`, {
-        username_or_email: usernameOrEmail,
-        password: loginPassword
-      })
-        .then(async (data) => {
-          createNotification('success', data.data.message)
-          console.log(data);
-        })
-        .catch(err => {
-          createNotification('error', err.message + "\n" + err.response.data.detail)
-
-          console.log(err)
-        })
+      console.log(emailOrUsername, loginPassword);
+      await login(
+        {
+          'email_or_username': emailOrUsername,
+          'password': loginPassword
+        }
+      );
     }
     catch (err) {
       console.log(err);
@@ -50,21 +49,15 @@ const Authentication = () => {
     event.preventDefault();
 
     try {
-      await axios.post(`${API_SERVER}/register`, {
-        username: username,
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        password: registerPassword
-      })
-        .then(async (data) => {
-          createNotification('success', data.data.message)
-          console.log(data);
-        })
-        .catch(err => {
-          createNotification('error', err.message + "\n" + err.response.data.detail)
-          console.log(err)
-        })
+      await register(
+        {
+          'username': username,
+          'first_name': firstName,
+          'last_name': lastName,
+          'email': email,
+          'password': registerPassword
+        }
+      )
     }
     catch (err) {
       console.log(err);
@@ -86,15 +79,16 @@ const Authentication = () => {
             <div className="form-group mt-3">
               <label>Username or Email address</label>
               <input
-                type="email"
+                name='email_or_username'
                 className="form-control mt-1"
                 placeholder="Enter username or email address"
-                onChange={(e) => setUsernameOrEmail(e.target.value)}
+                onChange={(e) => setEmailOrUsername(e.target.value)}
               />
             </div>
             <div className="form-group mt-3">
               <label>Password</label>
               <input
+                name='loginPassword'
                 type="password"
                 className="form-control mt-1"
                 placeholder="Enter password"
@@ -105,6 +99,10 @@ const Authentication = () => {
               <button type="submit" className="btn btn-primary">
                 Submit
               </button>
+            </div>
+            <div className="d-grid gap-2 mt-10 bg-yellow-100 py-3 justify-center" style={{ borderRadius: "10px" }}>
+              <span><Image src="./google.svg" alt="google" width={30} height={30} /></span>
+              <span>Google</span>
             </div>
             <p className="text-center mt-2">
               Forgot <a href="#">password?</a>
@@ -119,7 +117,7 @@ const Authentication = () => {
     <div className="Auth-form-container">
       <form className="Auth-form" onSubmit={handleSubmit_Register}>
         <div className="Auth-form-content">
-          <h3 className="Auth-form-title">Sign In</h3>
+          <h3 className="Auth-form-title">Sign Up</h3>
           <div className="text-center">
             Already registered?{" "}
             <span className="link-primary" onClick={changeAuthMode}>
@@ -137,6 +135,7 @@ const Authentication = () => {
           <div className="form-group mt-3">
             <label>First name</label>
             <input
+              name='firstName'
               className="form-control mt-1"
               placeholder="e.g David"
               onChange={(e) => setFirstName(e.target.value)}
@@ -145,6 +144,7 @@ const Authentication = () => {
           <div className="form-group mt-3">
             <label>Last Name</label>
             <input
+              name='lastName'
               className="form-control mt-1"
               placeholder="e.g Jin"
               onChange={(e) => setLastName(e.target.value)}
@@ -153,6 +153,7 @@ const Authentication = () => {
           <div className="form-group mt-3">
             <label>Email address</label>
             <input
+              name='email'
               type="email"
               className="form-control mt-1"
               placeholder="Email Address"
@@ -162,6 +163,7 @@ const Authentication = () => {
           <div className="form-group mt-3">
             <label>Password</label>
             <input
+              name='registerPassword'
               type="password"
               className="form-control mt-1"
               placeholder="Password"

@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google'
 // Notification
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
+import { AuthProvider } from './context/AuthContext';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,10 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <MantineProvider withNormalizeCSS withGlobalStyles>
-          <Notifications position='top-right' />
-          {children}
-        </MantineProvider>
+        <AuthProvider>
+          <MantineProvider withNormalizeCSS withGlobalStyles>
+            <Notifications position='top-right' />
+            {children}
+          </MantineProvider>
+        </AuthProvider>
       </body>
     </html>
   )
