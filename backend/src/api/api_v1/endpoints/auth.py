@@ -15,6 +15,62 @@ from utils.jwt import get_jwt_identity
 router = APIRouter()
 
 
+@router.post("/oauth/google")
+async def google(
+    req: any, redis_client: Redis = Depends(get_redis_client)
+) -> IPostResponseBase[Token]:
+    try:
+        # Get the code from the query
+        code = req.query.get("code")
+        pathUrl = req.query.get("state", "/")
+
+        # Use the code to get the id and access tokens
+        id_token, access_token = getGoogleOauthToken(code)
+
+        # Use the token to get the User
+        name, verified_email, email, picture = getGoogleUser(id_token, access_token)
+
+        # Check if user is verified
+        if not verified_email:
+            return next(AppError("Google account not verified", 403))
+
+        # Update user if user already exists or create new user
+        user = findAndUpdateUser(
+            {"email": email},
+            {
+                "name": name,
+                "photo": picture,
+                "email": email,
+                "provider": "Google",
+                "verified": True,
+            },
+            upsert=True,
+            runValidators=False,
+            new=True,
+            lean=True,
+        )
+
+        if not user:
+            return res.redirect(config.get("origin") + "/oauth/error")
+
+        # Create access and refresh token
+        accessToken, refresh_token = signToken(user)
+
+        # Send cookie
+        res.set_cookie("access_token", accessToken, **accessTokenCookieOptions)
+        res.set_cookie("refresh_token", refresh_token, **refreshTokenCookieOptions)
+        res.set_cookie(
+            "logged_in", "true", **{**accessTokenCookieOptions, "httpOnly": False}
+        )
+
+        res.redirect(config.get("origin") + pathUrl)
+    except Exception as err:
+        print("Failed to authorize Google User", err)
+        return res.redirect(config.get("origin") + "/oauth/error")
+
+    pass
+
+
 @router.post("/login")
 async def login(
     request: LoginPayload, redis_client: Redis = Depends(get_redis_client)
