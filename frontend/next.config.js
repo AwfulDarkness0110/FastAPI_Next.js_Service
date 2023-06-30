@@ -4,8 +4,8 @@ const nextConfig = {
   swcMinify: true,
   experimental: {
     appDir: true,
-    enableUndici: true,
   },
+  serverRuntimeConfig: true,
 };
 
 module.exports = nextConfig;

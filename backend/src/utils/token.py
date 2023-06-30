@@ -12,7 +12,6 @@ async def add_refresh_token_to_redis(
     refresh_token: str,
     ip: str,
     user_agent: str,
-    fingerprint: str,
 ) -> None:
     """
     Add refresh token to redis with other session information
@@ -21,7 +20,6 @@ async def add_refresh_token_to_redis(
     :param refresh_token: JWT token
     :param ip: IP address
     :param user_agent: User agent
-    :param fingerprint: Fingerprint
     :param redis_client: Redis client
     :return: None
     """
@@ -32,9 +30,8 @@ async def add_refresh_token_to_redis(
         "refresh_token_id": session_id,
         "ip": ip,
         "user_agent": user_agent,
-        "fingerprint": fingerprint,
         "exp": decoded_token["exp"],
-        "created_at": decoded_token["iat"],
+        "created_at": decoded_token["iat"]
     }
 
     await redis_client.sadd(f"user:{user.id}", session_id)

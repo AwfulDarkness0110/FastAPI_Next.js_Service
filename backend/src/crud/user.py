@@ -25,16 +25,15 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_obj = User(
             username=obj_in.username,
             email=obj_in.email,
-            password=hash_password(obj_in.password)
+            password=hash_password(obj_in.password),
         )
-        db_obj2 = UserItem(
-            username=obj_in.username,
-            first_name=obj_in.first_name,
-            last_name= obj_in.last_name
-        )
+        # db_obj2 = UserItem(
+        #     first_name=obj_in.first_name,
+        #     last_name= obj_in.last_name
+        # )
         db_session.add(db_obj)
-        db_session.add(db_obj2)
-        
+        # db_session.add(db_obj2)
+
         await db_session.commit()
         await db_session.refresh(db_obj)
         return db_obj
@@ -61,6 +60,23 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             return True
 
         return False
+
+    async def user_active(
+        self, username: str, db_session: Optional[AsyncSession] = None
+    ) -> Optional[User]:
+        db_session = db_session or db.session
+
+        query = select(User).where(User.username == username)
+        response = await db_session.execute(query)
+        user = response.scalar_one_or_none()
+
+        if user:
+            user.status = True
+            db_session.commit()
+        else:
+            print("User Not Founded")
+
+        return user
 
     @staticmethod
     async def get_by_email_or_username(

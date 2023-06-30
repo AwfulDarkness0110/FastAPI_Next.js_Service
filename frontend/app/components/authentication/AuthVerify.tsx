@@ -1,6 +1,7 @@
 'use client'
 import React from "react";
 import './style.css'
+import LogoutButton from "./LogoutButton";
 
 const Verification = () => {
     return (
@@ -17,6 +18,7 @@ const Verification = () => {
                     <p className="text-center mt-5">
                         If you didn't receive, 👉 <a href="#">Resend</a> Url
                     </p>
+                    <LogoutButton />
                 </div>
             </form>
         </div>

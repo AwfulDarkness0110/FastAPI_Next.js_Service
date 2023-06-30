@@ -1,6 +1,8 @@
 'use client'
-import React from "react";
+import React, { useContext } from "react";
 import './style.css'
+import AuthContext from "@/app/context/AuthContext";
+import LogoutButton from "./LogoutButton";
 
 const Welcome = () => {
     return (
@@ -11,12 +13,13 @@ const Welcome = () => {
                         <p>👋</p>
                         You Verified Success
                     </h3>
-                    <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex', height: "100%" }}>
                         <div>
                             <img src="welcome.png" />
                         </div>
                         <div className="text-center">
                             Now, you are verified user. You can use this system.
+                            <LogoutButton />
                         </div>
                     </div>
                 </div>
