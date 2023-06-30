@@ -8,6 +8,8 @@ import { createNotification } from "../Alert";
 import AuthContext from "@/app/context/AuthContext";
 import Link from "next/link";
 import Image from 'next/image';
+import { getGoogleUrl } from "@/app/utils/getGoogleUrl";
+import { useRouter } from "next/router";
 
 const Authentication = () => {
   let [authMode, setAuthMode] = useState("signin");
@@ -25,6 +27,7 @@ const Authentication = () => {
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
   };
+  const from = '/welcome';
 
   // Login Action
   const handleSubmit_Login = async (event: React.FormEvent) => {
@@ -43,6 +46,7 @@ const Authentication = () => {
       console.log(err);
     }
   }
+
 
   // Register Action
   const handleSubmit_Register = async (event: React.FormEvent) => {
@@ -67,7 +71,7 @@ const Authentication = () => {
   if (authMode === "signin") {
     return (
       <div className="Auth-form-container">
-        <form className="Auth-form" onSubmit={handleSubmit_Login}>
+        <div className="Auth-form">
           <div className="Auth-form-content">
             <h3 className="Auth-form-title">Sign In</h3>
             <div className="text-center">
@@ -96,19 +100,25 @@ const Authentication = () => {
               />
             </div>
             <div className="d-grid gap-2 mt-3">
-              <button type="submit" className="btn btn-primary">
+              <button type="submit" className="btn btn-primary" onClick={handleSubmit_Login}>
                 Submit
               </button>
             </div>
-            <div className="d-grid gap-2 mt-10 bg-yellow-100 py-3 justify-center" style={{ borderRadius: "10px" }}>
-              <span><Image src="./google.svg" alt="google" width={30} height={30} /></span>
-              <span>Google</span>
-            </div>
+            <Link href={getGoogleUrl(from)}>
+              <button
+                className="mt-10 bg-white shadow-lg py-3 justify-center flex"
+                style={{ borderRadius: "10px", width: '100%', height: '100%' }}
+              >
+                <span className="mr-3"><Image src="./google.svg" alt="google" width={30} height={30} style={{ display: 'flex' }} /></span>
+                <span style={{ fontSize: '30px' }}>Google</span>
+              </button>
+            </Link>
+
             <p className="text-center mt-2">
               Forgot <a href="#">password?</a>
             </p>
           </div>
-        </form>
+        </div>
       </div>
     );
   }
