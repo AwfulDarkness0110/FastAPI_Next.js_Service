@@ -58,7 +58,7 @@ export const POST = async (req: NextRequest) => {
       {
         headers: {
           ...headers,
-          "set-cookies": cookieString,
+          "Set-Cookies": cookieString,
         },
         status: 200,
       }

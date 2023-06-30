@@ -43,7 +43,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     })
       .then(async (res) => {
         createNotification('success', res.data.message || '😅 You registered successfully!')
-        console.log(res.data);
+        setUser(res.data.user);
+        router.push('/welcome');
       })
       .catch(err => {
         createNotification('😐 Failed Registration...', err.response.statusText + JSON.stringify(err.response.data))
@@ -74,11 +75,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         })
         .then(res => {
           // console.log('axios res: ', res)
+          // console.log('context axios login res', res.data);
+
+          console.log(res.data.data.user)
+
           createNotification('success', "👋 You Logged In Successfully!")
-          setUser(res.data.user);
-
-          // console.log("res: headers => ", res.headers);
-
+          setUser(res.data.data.user);
           router.push('/welcome');
         })
         .catch(err => {
@@ -120,9 +122,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
   };
 
+  // Verify User
+  const verify = async (token: string) => {
+    axios
+      .post(`${NEXT_URL}/verify`, {
+        "verify_token": token
+      })
+      .then(res => {
+        createNotification('success', "👋 You Verified Successfully!")
+        setUser(res.data.data.user);
+        router.push('/welcome');
+      })
+      .catch(err => {
+        createNotification('😐 Failed Verify...', err.response.statusText + JSON.stringify(err.response.data))
+      })
+  }
+
   return (
     <AuthContext.Provider
-      value={{ register, login, logout, isLoading, user, error }}
+      value={{ register, login, logout, isLoading, user, error, verify }}
     >
       {children}
     </AuthContext.Provider>

@@ -2,10 +2,9 @@
 import React, { useContext } from "react";
 import './style.css'
 import AuthContext from "@/app/context/AuthContext";
+import LogoutButton from "./LogoutButton";
 
 const Welcome = () => {
-    const { logout, user } = useContext(AuthContext);
-
     return (
         <div className="Auth-form-container">
             <form className="Auth-form">
@@ -20,7 +19,7 @@ const Welcome = () => {
                         </div>
                         <div className="text-center">
                             Now, you are verified user. You can use this system.
-                            <button type="button" className="mt-5 btn btn-primary">Log out</button>
+                            <LogoutButton />
                         </div>
                     </div>
                 </div>
