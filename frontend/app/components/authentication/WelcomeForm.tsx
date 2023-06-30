@@ -1,10 +1,21 @@
 'use client'
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import './style.css'
 import AuthContext from "@/app/context/AuthContext";
 import LogoutButton from "./LogoutButton";
+import { useRouter } from "next/navigation";
 
 const Welcome = () => {
+    const { user } = useContext(AuthContext);
+
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!user) {
+            router.push('/auth')
+        }
+    }, [user]);
+
     return (
         <div className="Auth-form-container">
             <form className="Auth-form">
