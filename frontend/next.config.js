@@ -6,6 +6,9 @@ const nextConfig = {
     appDir: true,
   },
   serverRuntimeConfig: true,
+  server: {
+    port: 13000,
+  },
 };
 
 module.exports = nextConfig;

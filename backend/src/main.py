@@ -11,7 +11,7 @@ from db.url import get_sqlalchemy_url
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.PROJECT_VERSION,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
 )
 
 # CORS handling
@@ -28,16 +28,13 @@ app.add_middleware(
         "pool_pre_ping": True,
         "pool_size": settings.SQLALCHEMY_POOL_SIZE,
         "max_overflow": settings.SQLALCHEMY_MAX_OVERFLOW,
-    }
+    },
 )
 
 # Client's IP and Address
 app.add_middleware(
     middleware.ContextMiddleware,
-    plugins=(
-        plugins.ForwardedForPlugin(),
-        plugins.UserAgentPlugin()
-    )
+    plugins=(plugins.ForwardedForPlugin(), plugins.UserAgentPlugin()),
 )
 
 # CORS handling
@@ -58,4 +55,5 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, port=8000, proxy_headers=True, log_level="debug")
+
+    uvicorn.run(app, port=15000, proxy_headers=True, log_level="debug")
