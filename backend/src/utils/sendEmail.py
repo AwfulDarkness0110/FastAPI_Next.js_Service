@@ -1,41 +1,80 @@
-# libraries to be imported
-import smtplib
+import smtplib, os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# instance of MIMEMultipart
-msg = MIMEMultipart()
+from dotenv.main import load_dotenv
 
-# storing the sender's email address
-msg["From"] = "ln9443953@gmail.com"
+load_dotenv()
 
-# storing the receiver's email address
-msg["To"] = "markgarner337@gmail.com"
+sender_email = "davidcross66u@gmail.com"
+password = "dqqthkvcreynwhmn"
 
-# storing the subject
-msg["Subject"] = "Email using Python"
+# Create message container
+message = MIMEMultipart("alternative")
+message["From"] = sender_email
 
-# Store the body of the mail
-message = "Scaler Topics"
 
-# attach the body with the msg instance
-msg.attach(MIMEText(message))
+async def send_verify_email_with_link(receiver_email, verification_token):
+    message["Subject"] = "System Account Verification"
+    message["To"] = receiver_email
 
-# creates SMTP session
-mailserver = smtplib.SMTP("smtp.gmail.com", 587)
+    # generate link url with verification_token
+    link_url = str(os.environ["BACKEND_API"]) + verification_token
 
-# identify ourselves to smtp gmail client
-mailserver.ehlo()
+    # Create the HTML content
+    html = f"""
+    <html>
+        <body>
+            <p>Hello,<br>
+                This is an example email with a link button.<br>
+                Please click the button below to visit our website.<br>
+            </p>
+            <p>
+                <a href="{link_url}">
+                    <button style="background-color: #008CBA; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                        Verify Account
+                    </button>
+                </a>
+            </p>
+        </body>
+    </html>
+    """
+    # Attach the HTML content to the email
+    message.attach(MIMEText(html, "html"))
+    # Connect to the SMTP server
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message.as_string())
 
-# secure our email with tls encryption
-mailserver.starttls()
 
-# re-identify ourselves as an encrypted connection
-mailserver.ehlo()
+async def send_verification_success_email(receiver_email):
+    message["Subject"] = "System Account Verification"
+    message["To"] = receiver_email
 
-# Authentication
-mailserver.login("ln9443953@gmail.com", "D@rkness1122")
+    # Create the HTML content
+    html = f"""
+    <html>
+        <body>
+            <p>Hello,<br>
+                Successfully!<br>
+            </p>
+        </body>
+    </html>
+    """
+    # Attach the HTML content to the email
+    message.attach(MIMEText(html, "html"))
+    # Connect to the SMTP server
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message.as_string())
 
-mailserver.sendmail("ln9443953@gmail.com", "markgarner337@gmail.com", msg.as_string())
 
-mailserver.quit()
+# Usage example
+# sender_email = "davidcross66u@gmail.com"
+# receiver_email = "markgarner337@gmail.com"
+# subject = "Example Email with Link Button"
+# link_text = "Visit Website"
+# link_url = "https://www.example.com"
+# send_email_with_link(sender_email, receiver_email, subject, link_text, link_url)

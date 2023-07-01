@@ -26,10 +26,12 @@ export const POST = async (req: NextRequest) => {
 
     const data = response.data;
 
+    console.log("register_response: ", response);
+
     // Set Cookie
     const cookieString = await cookie.serialize(
       "token",
-      String(data.token.access_token),
+      String(data.data.access_token),
       {
         httpOnly: true,
         secure: process.env.NODE_ENV !== "development",

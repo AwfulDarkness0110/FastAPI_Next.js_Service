@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     })
       .then(async (res) => {
         createNotification('success', res.data.message || '😅 You registered successfully!')
-        setUser(res.data.user);
+        setUser(res.data.data.user);
         router.push('/welcome');
       })
       .catch(err => {

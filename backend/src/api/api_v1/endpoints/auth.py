@@ -11,6 +11,7 @@ from core.security import create_access_token, create_refresh_token
 from db.redis import get_redis_client
 
 from utils.jwt import get_jwt_identity
+from utils.sendEmail import send_verification_success_email, send_verify_email_with_link
 
 router = APIRouter()
 
@@ -157,11 +158,16 @@ async def register(
         redis_client, user, refresh_token, forwarded_for, user_agent
     )
 
+    # Tokens
     data = Token(
         access_token=access_token, refresh_token=refresh_token, token_type="bearer"
     )
 
+    # We have to return user information
     user_info = {"username": user.username, "email": user.email, "status": user.status}
+
+    # we hae to send verification email
+    await send_verify_email_with_link(user.email, access_token)
 
     return create_response(
         data=data, message="User registered successfully", user=user_info
@@ -221,19 +227,21 @@ async def logout(request: Request):
     pass
 
 
-@router.post("/verify")
+@router.get("/verify", tags=["basic"])
 async def verify(
-    request: VerifyPayload, redis_client: Redis = Depends(get_redis_client)
+    args: VerifyPayload = Depends(VerifyPayload),
+    redis_client: Redis = Depends(get_redis_client),
 ) -> IPostResponseBase[Token]:
     forwarded_for, user_agent = get_auth_headers()
-    token = request.verify_token
 
-    try:
-        username = get_jwt_identity(token)
-        # user verify: active => status
-        user = await crud_user.user.user_active(username)
+    token = args.verify_token
+    resend_verify = args.resend_verify
+    username = args.username
 
-        print(user)
+    print(resend_verify, username)
+
+    if resend_verify:
+        user = await crud_user.user.get_by_username(user.username)
 
         # Create tokens
         access_token = create_access_token(user.username)
@@ -244,15 +252,53 @@ async def verify(
             redis_client, user, refresh_token, forwarded_for, user_agent
         )
 
+        # token regeneration
         data = Token(
             access_token=access_token, refresh_token=refresh_token, token_type="bearer"
         )
 
+        # user information to return
         user_info = {
             "username": user.username,
             "email": user.email,
             "status": user.status,
         }
+
+        # send email to user
+        await send_verify_email_with_link(user.email, access_token)
+
+        return create_response(
+            data=data, message="Resend Verification Email successfully", user=user_info
+        )
+
+    try:
+        username = get_jwt_identity(token)
+        # user verify: active => status
+        user = await crud_user.user.user_active(username)
+
+        # Create tokens
+        access_token = create_access_token(user.username)
+        refresh_token = create_refresh_token(user.username)
+
+        # Store refresh token and other metadata in redis
+        await add_refresh_token_to_redis(
+            redis_client, user, refresh_token, forwarded_for, user_agent
+        )
+
+        # token regeneration
+        data = Token(
+            access_token=access_token, refresh_token=refresh_token, token_type="bearer"
+        )
+
+        # user information to return
+        user_info = {
+            "username": user.username,
+            "email": user.email,
+            "status": user.status,
+        }
+
+        # send email to user
+        await send_verification_success_email(user.email)
 
         return create_response(
             data=data, message="User Verified successfully", user=user_info

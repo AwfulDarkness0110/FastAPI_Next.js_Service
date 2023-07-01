@@ -24,5 +24,8 @@ class RegisterPayload(AuthPayload):
 class RefreshPayload(BaseModel):
     refresh_token: str
 
+
 class VerifyPayload(BaseModel):
     verify_token: str
+    resend_verify: Union[bool, None]
+    username: Union[str, None]
