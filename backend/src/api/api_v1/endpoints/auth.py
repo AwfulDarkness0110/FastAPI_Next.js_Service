@@ -149,6 +149,8 @@ async def register(
     # Create user
     user = await crud_user.user.create(obj_in=request)
 
+    print("register: create user db successfully")
+
     # Create tokens
     access_token = create_access_token(user.username)
     refresh_token = create_refresh_token(user.username)

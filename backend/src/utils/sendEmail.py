@@ -19,7 +19,7 @@ async def send_verify_email_with_link(receiver_email, verification_token):
     message["To"] = receiver_email
 
     # generate link url with verification_token
-    link_url = str(os.environ["BACKEND_API"]) + verification_token
+    link_url = str(os.environ["BACKEND_API"]) + "/verify/" + verification_token
 
     # Create the HTML content
     html = f"""

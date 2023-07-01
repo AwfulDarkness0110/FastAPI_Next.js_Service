@@ -12,8 +12,6 @@ const Verification = () => {
     const resend_verify_request = () => {
         axios.get(`${process.env.NEXT_APP_SERVER_ENDPOINT}/verify?resend_verify=true&username=${user.username}`)
             .then(res => {
-                console.log("resend verification reply: ", res);
-
                 createNotification('success', res.data.message);
             })
             .catch(err => {

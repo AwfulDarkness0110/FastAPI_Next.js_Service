@@ -22,6 +22,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             # Create the database here
             await create_tables()
 
+        print(obj_in.username, obj_in.email)
+
         db_obj = User(
             username=obj_in.username,
             email=obj_in.email,
