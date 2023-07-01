@@ -11,6 +11,8 @@ from core.config import settings
 from db.url import get_sqlalchemy_url
 from db.base_class import Base
 
+from db.session import create_async_engine
+
 from models import *  # necessarily to import something from file where your models are stored
 
 # this is the Alembic Config object, which provides
@@ -19,8 +21,7 @@ config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
 
@@ -36,6 +37,13 @@ target_metadata.naming_convention = {
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+
+def include_object(obj, name, type_, reflected, compare_to):
+    if obj.info.get("skip_autogen", False):
+        return False
+
+    return True
 
 
 def run_migrations_offline() -> None:
@@ -56,6 +64,8 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_object=include_object,
+        compare_type=True,
     )
 
     with context.begin_transaction():
@@ -63,7 +73,13 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        dialect_opts={"paramstyle": "named"},
+        include_object=include_object,
+        compare_type=True,
+    )
 
     with context.begin_transaction():
         context.run_migrations()
